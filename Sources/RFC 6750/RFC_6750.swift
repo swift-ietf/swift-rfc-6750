@@ -129,7 +129,9 @@ extension RFC_6750.Bearer {
     /// - Parameter queryItems: Query items as name-value pairs
     /// - Returns: Bearer token if present and valid
     /// - Throws: `Error` for missing or invalid token
-    public static func parse(fromQueryItems queryItems: [RFC_6750.QueryItem]) throws(Error) -> RFC_6750.Bearer {
+    public static func parse(
+        fromQueryItems queryItems: [RFC_6750.QueryItem]
+    ) throws(Error) -> RFC_6750.Bearer {
         guard let tokenItem = queryItems.first(where: { $0.name == "access_token" }),
             let tokenString = tokenItem.value
         else {
@@ -200,7 +202,9 @@ extension RFC_6750.Bearer {
         /// - Parameter headerValue: The WWW-Authenticate header value
         /// - Returns: Bearer.Challenge if valid
         /// - Throws: `Error` for invalid format
-        public static func parse(from headerValue: String) throws(Error) -> RFC_6750.Bearer.Challenge {
+        public static func parse(
+            from headerValue: String
+        ) throws(Error) -> RFC_6750.Bearer.Challenge {
             let trimmed = String(headerValue.trimming(where: { $0.isWhitespace }))
 
             guard trimmed.lowercased().hasPrefix("bearer") else {
@@ -255,11 +259,15 @@ extension RFC_6750.Bearer {
             )
         }
 
-        private static func extractQuotedValue(from component: String, parameter: String) -> String? {
+        private static func extractQuotedValue(
+            from component: String,
+            parameter: String
+        ) -> String? {
             let prefix = "\(parameter)="
             guard component.lowercased().hasPrefix(prefix.lowercased()) else { return nil }
 
-            let value = String(component.dropFirst(prefix.count)).trimming(where: { $0.isWhitespace })
+            let value = String(component.dropFirst(prefix.count))
+                .trimming(where: { $0.isWhitespace })
             if value.hasPrefix("\"") && value.hasSuffix("\"") {
                 return String(value.dropFirst().dropLast())
             }
