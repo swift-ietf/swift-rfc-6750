@@ -10,7 +10,9 @@ import ASCII_Primitives
 /// Implementation of RFC 6750: The OAuth 2.0 Authorization Framework: Bearer Token Usage
 ///
 /// See: https://www.rfc-editor.org/rfc/rfc6750.html
-public enum RFC_6750 {
+public enum RFC_6750 {}
+
+extension RFC_6750 {
     /// Represents an OAuth 2.0 Bearer Token according to RFC 6750
     public struct Bearer: Codable, Hashable, Sendable {
         public let token: String
@@ -173,106 +175,108 @@ extension RFC_6750.Bearer {
             self.error = error
             self.errorDescription = errorDescription
         }
+    }
+}
 
-        /// Creates WWW-Authenticate header value
-        /// - Returns: Complete WWW-Authenticate header value
-        public func wwwAuthenticateHeaderValue() -> String {
-            var components: [String] = ["Bearer"]
+extension RFC_6750.Bearer.Challenge {
+    /// Creates WWW-Authenticate header value
+    /// - Returns: Complete WWW-Authenticate header value
+    public func wwwAuthenticateHeaderValue() -> String {
+        var components: [String] = ["Bearer"]
 
-            if let realm = realm {
-                components.append("realm=\"\(realm)\"")
-            }
-
-            if let scope = scope {
-                components.append("scope=\"\(scope)\"")
-            }
-
-            if let error = error {
-                components.append("error=\"\(error.rawValue)\"")
-            }
-
-            if let errorDescription = errorDescription {
-                components.append("error_description=\"\(errorDescription)\"")
-            }
-
-            return components.joined(separator: ", ")
+        if let realm = realm {
+            components.append("realm=\"\(realm)\"")
         }
 
-        /// Parses Bearer challenge from WWW-Authenticate header
-        /// - Parameter headerValue: The WWW-Authenticate header value
-        /// - Returns: Bearer.Challenge if valid
-        /// - Throws: `Error` for invalid format
-        public static func parse(
-            from headerValue: String
-        ) throws(Error) -> RFC_6750.Bearer.Challenge {
-            let trimmed = String(headerValue.trimming(where: { $0.isWhitespace }))
+        if let scope = scope {
+            components.append("scope=\"\(scope)\"")
+        }
 
-            guard trimmed.lowercased().hasPrefix("bearer") else {
-                throw Error.invalidRequest("WWW-Authenticate header must start with 'Bearer'")
-            }
+        if let error = error {
+            components.append("error=\"\(error.rawValue)\"")
+        }
 
-            let parameters = String(trimmed.dropFirst(6)).trimming(where: { $0.isWhitespace })
-            var realm: String?
-            var scope: String?
-            var error: ErrorCode?
-            var errorDescription: String?
+        if let errorDescription = errorDescription {
+            components.append("error_description=\"\(errorDescription)\"")
+        }
 
-            if !parameters.isEmpty {
-                let pBytes = Array(parameters.utf8)
-                var segStart = 0
-                var components: [String] = []
-                for idx in 0..<pBytes.count {
-                    if pBytes[idx] == 0x2C {  // ','
-                        components.append(String(decoding: pBytes[segStart..<idx], as: UTF8.self))
-                        segStart = idx &+ 1
-                    }
-                }
-                components.append(String(decoding: pBytes[segStart..<pBytes.count], as: UTF8.self))
+        return components.joined(separator: ", ")
+    }
 
-                for component in components {
-                    let trimmedComponent = String(component.trimming(where: { $0.isWhitespace }))
-                    if trimmedComponent.lowercased().hasPrefix("realm=") {
-                        realm = extractQuotedValue(from: trimmedComponent, parameter: "realm")
-                    } else if trimmedComponent.lowercased().hasPrefix("scope=") {
-                        scope = extractQuotedValue(from: trimmedComponent, parameter: "scope")
-                    } else if trimmedComponent.lowercased().hasPrefix("error=") {
-                        if let errorValue = extractQuotedValue(
-                            from: trimmedComponent,
-                            parameter: "error"
-                        ) {
-                            error = ErrorCode(rawValue: errorValue)
-                        }
-                    } else if trimmedComponent.lowercased().hasPrefix("error_description=") {
-                        errorDescription = extractQuotedValue(
-                            from: trimmedComponent,
-                            parameter: "error_description"
-                        )
-                    }
+    /// Parses Bearer challenge from WWW-Authenticate header
+    /// - Parameter headerValue: The WWW-Authenticate header value
+    /// - Returns: Bearer.Challenge if valid
+    /// - Throws: `Error` for invalid format
+    public static func parse(
+        from headerValue: String
+    ) throws(RFC_6750.Bearer.Error) -> RFC_6750.Bearer.Challenge {
+        let trimmed = String(headerValue.trimming(where: { $0.isWhitespace }))
+
+        guard trimmed.lowercased().hasPrefix("bearer") else {
+            throw RFC_6750.Bearer.Error.invalidRequest("WWW-Authenticate header must start with 'Bearer'")
+        }
+
+        let parameters = String(trimmed.dropFirst(6)).trimming(where: { $0.isWhitespace })
+        var realm: String?
+        var scope: String?
+        var error: RFC_6750.Bearer.ErrorCode?
+        var errorDescription: String?
+
+        if !parameters.isEmpty {
+            let pBytes = Array(parameters.utf8)
+            var segStart = 0
+            var components: [String] = []
+            for idx in 0..<pBytes.count {
+                if pBytes[idx] == 0x2C {  // ','
+                    components.append(String(decoding: pBytes[segStart..<idx], as: UTF8.self))
+                    segStart = idx &+ 1
                 }
             }
+            components.append(String(decoding: pBytes[segStart..<pBytes.count], as: UTF8.self))
 
-            return RFC_6750.Bearer.Challenge(
-                realm: realm,
-                scope: scope,
-                error: error,
-                errorDescription: errorDescription
-            )
-        }
-
-        private static func extractQuotedValue(
-            from component: String,
-            parameter: String
-        ) -> String? {
-            let prefix = "\(parameter)="
-            guard component.lowercased().hasPrefix(prefix.lowercased()) else { return nil }
-
-            let value = String(component.dropFirst(prefix.count))
-                .trimming(where: { $0.isWhitespace })
-            if value.hasPrefix("\"") && value.hasSuffix("\"") {
-                return String(value.dropFirst().dropLast())
+            for component in components {
+                let trimmedComponent = String(component.trimming(where: { $0.isWhitespace }))
+                if trimmedComponent.lowercased().hasPrefix("realm=") {
+                    realm = extractQuotedValue(from: trimmedComponent, parameter: "realm")
+                } else if trimmedComponent.lowercased().hasPrefix("scope=") {
+                    scope = extractQuotedValue(from: trimmedComponent, parameter: "scope")
+                } else if trimmedComponent.lowercased().hasPrefix("error=") {
+                    if let errorValue = extractQuotedValue(
+                        from: trimmedComponent,
+                        parameter: "error"
+                    ) {
+                        error = RFC_6750.Bearer.ErrorCode(rawValue: errorValue)
+                    }
+                } else if trimmedComponent.lowercased().hasPrefix("error_description=") {
+                    errorDescription = extractQuotedValue(
+                        from: trimmedComponent,
+                        parameter: "error_description"
+                    )
+                }
             }
-            return String(value)
         }
+
+        return RFC_6750.Bearer.Challenge(
+            realm: realm,
+            scope: scope,
+            error: error,
+            errorDescription: errorDescription
+        )
+    }
+
+    private static func extractQuotedValue(
+        from component: String,
+        parameter: String
+    ) -> String? {
+        let prefix = "\(parameter)="
+        guard component.lowercased().hasPrefix(prefix.lowercased()) else { return nil }
+
+        let value = String(component.dropFirst(prefix.count))
+            .trimming(where: { $0.isWhitespace })
+        if value.hasPrefix("\"") && value.hasSuffix("\"") {
+            return String(value.dropFirst().dropLast())
+        }
+        return String(value)
     }
 }
 
@@ -284,19 +288,6 @@ extension RFC_6750.Bearer {
         case invalidRequest = "invalid_request"
         case invalidToken = "invalid_token"
         case insufficientScope = "insufficient_scope"
-
-        public var description: String {
-            switch self {
-            case .invalidRequest:
-                return
-                    "The request is missing a required parameter, includes an unsupported parameter or parameter value, repeats the same parameter, uses more than one method for including an access token, or is otherwise malformed."
-            case .invalidToken:
-                return
-                    "The access token provided is expired, revoked, malformed, or invalid for other reasons."
-            case .insufficientScope:
-                return "The request requires higher privileges than provided by the access token."
-            }
-        }
     }
 
     /// Errors that can occur during Bearer token operations
@@ -304,16 +295,33 @@ extension RFC_6750.Bearer {
         case invalidRequest(String)
         case invalidToken(String)
         case insufficientScope(String)
+    }
+}
 
-        public var errorCode: ErrorCode {
-            switch self {
-            case .invalidRequest:
-                return .invalidRequest
-            case .invalidToken:
-                return .invalidToken
-            case .insufficientScope:
-                return .insufficientScope
-            }
+extension RFC_6750.Bearer.ErrorCode {
+    public var description: String {
+        switch self {
+        case .invalidRequest:
+            return
+                "The request is missing a required parameter, includes an unsupported parameter or parameter value, repeats the same parameter, uses more than one method for including an access token, or is otherwise malformed."
+        case .invalidToken:
+            return
+                "The access token provided is expired, revoked, malformed, or invalid for other reasons."
+        case .insufficientScope:
+            return "The request requires higher privileges than provided by the access token."
+        }
+    }
+}
+
+extension RFC_6750.Bearer.Error {
+    public var errorCode: RFC_6750.Bearer.ErrorCode {
+        switch self {
+        case .invalidRequest:
+            return .invalidRequest
+        case .invalidToken:
+            return .invalidToken
+        case .insufficientScope:
+            return .insufficientScope
         }
     }
 }
