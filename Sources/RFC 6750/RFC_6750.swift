@@ -213,7 +213,9 @@ extension RFC_6750.Bearer.Challenge {
         let trimmed = String(headerValue.trimming(where: { $0.isWhitespace }))
 
         guard trimmed.lowercased().hasPrefix("bearer") else {
-            throw RFC_6750.Bearer.Error.invalidRequest("WWW-Authenticate header must start with 'Bearer'")
+            throw RFC_6750.Bearer.Error.invalidRequest(
+                "WWW-Authenticate header must start with 'Bearer'"
+            )
         }
 
         let parameters = String(trimmed.dropFirst(6)).trimming(where: { $0.isWhitespace })
