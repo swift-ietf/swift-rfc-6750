@@ -1,7 +1,7 @@
 # Swift RFC 6750
 
-[![CI](https://github.com/swift-ietf/swift-rfc-6750/workflows/CI/badge.svg)](https://github.com/swift-ietf/swift-rfc-6750/actions/workflows/ci.yml)
 ![Development Status](https://img.shields.io/badge/status-active--development-blue.svg)
+[![CI](https://github.com/swift-ietf/swift-rfc-6750/workflows/CI/badge.svg)](https://github.com/swift-ietf/swift-rfc-6750/actions/workflows/ci.yml)
 
 Swift implementation of RFC 6750: The OAuth 2.0 Authorization Framework - Bearer Token Usage.
 
