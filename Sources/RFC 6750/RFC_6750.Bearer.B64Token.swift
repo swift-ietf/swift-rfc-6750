@@ -53,6 +53,8 @@ extension RFC_6750.Bearer.B64Token {
                 "Token does not conform to the RFC 6750 §2.1 b64token grammar"
             )
         }
+        // swift-linter:disable:next unchecked call site
+        // REASON: same-package extension-init internal use — `rawValue` was just validated against the grammar above.
         self.init(__unchecked: (), rawValue: rawValue)
     }
 
@@ -100,6 +102,8 @@ extension RFC_6750.Bearer {
     ///
     /// - Parameter b64token: A grammar-validated ``B64Token``.
     public init(b64token: B64Token) {
+        // swift-linter:disable:next unchecked call site
+        // REASON: same-package extension-init internal use — `b64token` is a grammar-validated `B64Token`.
         self.init(__unchecked: (), token: b64token.rawValue)
     }
 }

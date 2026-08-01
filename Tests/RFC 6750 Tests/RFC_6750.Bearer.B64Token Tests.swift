@@ -9,7 +9,12 @@ import Testing
 
 @Suite
 struct `Bearer B64Token Tests` {
+    @Suite struct Unit {}
+    @Suite struct `Edge Case` {}
+    @Suite struct Integration {}
+}
 
+extension `Bearer B64Token Tests`.Unit {
     @Test
     func `Valid b64token strings conform`() {
         // Grammar characters, with and without trailing "=" padding.
@@ -34,6 +39,8 @@ struct `Bearer B64Token Tests` {
     @Test
     func `B64Token validating init round-trips through Bearer`() throws {
         let token = try RFC_6750.Bearer.B64Token("mF_9.B5f-4.1JqM")
+        // swift-linter:disable:next raw value access
+        // REASON: test asserts the RawRepresentable `rawValue` contract directly.
         #expect(token.rawValue == "mF_9.B5f-4.1JqM")
 
         let bearer = RFC_6750.Bearer(b64token: token)
@@ -42,6 +49,8 @@ struct `Bearer B64Token Tests` {
 
         // Round-trip through the Authorization header parser.
         let parsed = try RFC_6750.Bearer.parse(from: bearer.authorizationHeaderValue())
+        // swift-linter:disable:next raw value access
+        // REASON: test asserts the RawRepresentable `rawValue` contract directly.
         #expect(parsed.token == token.rawValue)
     }
 

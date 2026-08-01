@@ -11,7 +11,12 @@ import Testing
 
 @Suite
 struct `README Verification` {
+    @Suite struct Unit {}
+    @Suite struct `Edge Case` {}
+    @Suite struct Integration {}
+}
 
+extension `README Verification`.Unit {
     @Test
     func `README Line 47-56: Creating Bearer Tokens`() throws {
         // Create a Bearer token

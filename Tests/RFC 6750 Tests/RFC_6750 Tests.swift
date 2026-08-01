@@ -11,7 +11,12 @@ import Testing
 
 @Suite
 struct `RFC 6750 Tests` {
+    @Suite struct Unit {}
+    @Suite struct `Edge Case` {}
+    @Suite struct Integration {}
+}
 
+extension `RFC 6750 Tests`.Unit {
     @Test
     func `Bearer token creation and validation`() throws {
         let bearer = try RFC_6750.Bearer(token: "mF_9.B5f-4.1JqM")
