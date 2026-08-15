@@ -15,9 +15,11 @@ extension RFC_6750.Bearer.ErrorCode {
         case .invalidRequest:
             return
                 "The request is missing a required parameter, includes an unsupported parameter or parameter value, repeats the same parameter, uses more than one method for including an access token, or is otherwise malformed."
+
         case .invalidToken:
             return
                 "The access token provided is expired, revoked, malformed, or invalid for other reasons."
+
         case .insufficientScope:
             return "The request requires higher privileges than provided by the access token."
         }
