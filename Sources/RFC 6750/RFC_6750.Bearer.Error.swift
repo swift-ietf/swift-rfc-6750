@@ -12,8 +12,10 @@ extension RFC_6750.Bearer.Error {
         switch self {
         case .invalidRequest:
             return .invalidRequest
+
         case .invalidToken:
             return .invalidToken
+
         case .insufficientScope:
             return .insufficientScope
         }
@@ -25,8 +27,10 @@ extension RFC_6750.Bearer.Error: CustomStringConvertible {
         switch self {
         case .invalidRequest(let message):
             return "Invalid request: \(message)"
+
         case .invalidToken(let message):
             return "Invalid token: \(message)"
+
         case .insufficientScope(let message):
             return "Insufficient scope: \(message)"
         }

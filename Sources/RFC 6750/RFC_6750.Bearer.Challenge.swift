@@ -34,21 +34,21 @@ extension RFC_6750.Bearer.Challenge {
     public func wwwAuthenticateHeaderValue() -> String {
         var components: [String] = ["Bearer"]
 
-        if let realm = realm {
+        if let realm {
             components.append("realm=\"\(realm)\"")
         }
 
-        if let scope = scope {
+        if let scope {
             components.append("scope=\"\(scope)\"")
         }
 
-        if let error = error {
+        if let error {
             // swift-linter:disable:next raw value access
             // REASON: same-package implementation — `Bearer.Challenge` and `Bearer.ErrorCode` are both nested members of `RFC_6750.Bearer`.
             components.append("error=\"\(error.rawValue)\"")
         }
 
-        if let errorDescription = errorDescription {
+        if let errorDescription {
             components.append("error_description=\"\(errorDescription)\"")
         }
 
