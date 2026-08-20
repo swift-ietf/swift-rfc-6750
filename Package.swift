@@ -1,4 +1,4 @@
-// swift-tools-version: 6.3.3
+// swift-tools-version: 6.4
 
 import PackageDescription
 
@@ -13,30 +13,39 @@ extension Target.Dependency {
 let package = Package(
     name: "swift-rfc-6750",
     platforms: [
-        .macOS("27"),
-        .iOS("27"),
-        .tvOS("27"),
-        .watchOS("27")
+        .macOS(.v27),
+        .iOS(.v27),
+        .tvOS(.v27),
+        .watchOS(.v27),
     ],
     products: [
         .library(name: "RFC 6750", targets: ["RFC 6750"])
     ],
     dependencies: [
-        .package(url: "https://github.com/swift-primitives/swift-ascii-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-standard-library-extensions.git", branch: "main")
+        .package(
+            url: "https://github.com/swift-primitives/swift-ascii-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-standard-library-extensions.git",
+            branch: "main"
+        ),
     ],
     targets: [
         .target(
             name: "RFC 6750",
             dependencies: [
                 .product(name: "ASCII Primitives", package: "swift-ascii-primitives"),
-                .product(name: "Standard Library Extensions", package: "swift-standard-library-extensions")
+                .product(
+                    name: "Standard Library Extensions",
+                    package: "swift-standard-library-extensions"
+                ),
             ]
         ),
         .testTarget(
             name: "RFC 6750 Tests",
             dependencies: [
-                "RFC 6750",
+                "RFC 6750"
             ]
         ),
     ],
