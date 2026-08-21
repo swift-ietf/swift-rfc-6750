@@ -1,7 +1,5 @@
-// MARK: - Error Handling
-
 extension RFC_6750.Bearer {
-    /// OAuth 2.0 Bearer Token error codes according to RFC 6750
+
     public enum ErrorCode: String, Codable, Hashable, Sendable, CaseIterable {
         case invalidRequest = "invalid_request"
         case invalidToken = "invalid_token"

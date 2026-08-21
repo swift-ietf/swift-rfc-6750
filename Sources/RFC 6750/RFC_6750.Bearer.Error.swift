@@ -1,5 +1,5 @@
 extension RFC_6750.Bearer {
-    /// Errors that can occur during Bearer token operations
+
     public enum Error: Swift.Error, Sendable, Equatable {
         case invalidRequest(String)
         case invalidToken(String)

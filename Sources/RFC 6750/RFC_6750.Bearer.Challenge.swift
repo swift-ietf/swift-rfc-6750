@@ -1,19 +1,11 @@
-// MARK: - WWW-Authenticate Challenge
-
 extension RFC_6750.Bearer {
-    /// Represents a Bearer token authentication challenge from WWW-Authenticate header
+
     public struct Challenge: Codable, Hashable, Sendable {
         public let realm: String?
         public let scope: String?
         public let error: ErrorCode?
         public let errorDescription: String?
 
-        /// Creates a Bearer authentication challenge
-        /// - Parameters:
-        ///   - realm: Optional protection space identifier
-        ///   - scope: Optional space-delimited list of required access scopes
-        ///   - error: Optional error code for access denial
-        ///   - errorDescription: Optional human-readable error explanation
         public init(
             realm: String? = nil,
             scope: String? = nil,
@@ -29,8 +21,7 @@ extension RFC_6750.Bearer {
 }
 
 extension RFC_6750.Bearer.Challenge {
-    /// Creates WWW-Authenticate header value
-    /// - Returns: Complete WWW-Authenticate header value
+
     public func wwwAuthenticateHeaderValue() -> String {
         var components: [String] = ["Bearer"]
 
@@ -43,8 +34,7 @@ extension RFC_6750.Bearer.Challenge {
         }
 
         if let error {
-            // swift-linter:disable:next raw value access
-            // REASON: same-package implementation — `Bearer.Challenge` and `Bearer.ErrorCode` are both nested members of `RFC_6750.Bearer`.
+
             components.append("error=\"\(error.rawValue)\"")
         }
 
@@ -55,10 +45,6 @@ extension RFC_6750.Bearer.Challenge {
         return components.joined(separator: ", ")
     }
 
-    /// Parses Bearer challenge from WWW-Authenticate header
-    /// - Parameter headerValue: The WWW-Authenticate header value
-    /// - Returns: Bearer.Challenge if valid
-    /// - Throws: `Error` for invalid format
     public static func parse(
         from headerValue: String
     ) throws(RFC_6750.Bearer.Error) -> RFC_6750.Bearer.Challenge {
@@ -81,7 +67,7 @@ extension RFC_6750.Bearer.Challenge {
             var segStart = 0
             var components: [String] = []
             pBytes.indices.forEach { idx in
-                if pBytes[idx] == 0x2C {  // ','
+                if pBytes[idx] == 0x2C {
                     components.append(String(decoding: pBytes[segStart..<idx], as: UTF8.self))
                     segStart = idx &+ 1
                 }

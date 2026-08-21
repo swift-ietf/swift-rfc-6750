@@ -1,10 +1,3 @@
-//
-//  RFC_6750 Tests.swift
-//  RFC_6750 Tests
-//
-//  Created by Generated on 2025-07-27.
-//
-
 import Testing
 
 @testable import RFC_6750
@@ -22,22 +15,18 @@ extension `RFC 6750 Tests`.Unit {
         let bearer = try RFC_6750.Bearer(token: "mF_9.B5f-4.1JqM")
         #expect(bearer.token == "mF_9.B5f-4.1JqM")
 
-        // Test empty token throws error
         #expect(throws: RFC_6750.Bearer.Error.self) {
             try RFC_6750.Bearer(token: "")
         }
 
-        // Test whitespace-only token throws error
         #expect(throws: RFC_6750.Bearer.Error.self) {
             try RFC_6750.Bearer(token: "   ")
         }
 
-        // Test token with whitespace throws error
         #expect(throws: RFC_6750.Bearer.Error.self) {
             try RFC_6750.Bearer(token: "token with spaces")
         }
 
-        // Test token with non-ASCII characters throws error
         #expect(throws: RFC_6750.Bearer.Error.self) {
             try RFC_6750.Bearer(token: "tökén")
         }
@@ -72,7 +61,6 @@ extension `RFC 6750 Tests`.Unit {
         let bearer = try RFC_6750.Bearer.parse(from: headerValue)
         #expect(bearer.token == "mF_9.B5f-4.1JqM")
 
-        // Test with whitespace
         let headerWithSpaces = "  Bearer mF_9.B5f-4.1JqM  "
         let bearerWithSpaces = try RFC_6750.Bearer.parse(from: headerWithSpaces)
         #expect(bearerWithSpaces.token == "mF_9.B5f-4.1JqM")
@@ -80,17 +68,15 @@ extension `RFC 6750 Tests`.Unit {
 
     @Test
     func `Bearer token parsing from Authorization header error cases`() {
-        // Missing "Bearer " prefix
+
         #expect(throws: RFC_6750.Bearer.Error.self) {
             try RFC_6750.Bearer.parse(from: "Basic mF_9.B5f-4.1JqM")
         }
 
-        // Empty token
         #expect(throws: RFC_6750.Bearer.Error.self) {
             try RFC_6750.Bearer.parse(from: "Bearer ")
         }
 
-        // Only "Bearer"
         #expect(throws: RFC_6750.Bearer.Error.self) {
             try RFC_6750.Bearer.parse(from: "Bearer")
         }
@@ -105,12 +91,11 @@ extension `RFC 6750 Tests`.Unit {
 
     @Test
     func `Bearer token parsing from form parameters error cases`() {
-        // Missing access_token parameter
+
         #expect(throws: RFC_6750.Bearer.Error.self) {
             try RFC_6750.Bearer.parse(fromFormParameters: ["other_param": "value"])
         }
 
-        // Empty access_token parameter
         #expect(throws: RFC_6750.Bearer.Error.self) {
             try RFC_6750.Bearer.parse(fromFormParameters: ["access_token": ""])
         }
@@ -128,21 +113,19 @@ extension `RFC 6750 Tests`.Unit {
 
     @Test
     func `Bearer token parsing from query items error cases`() {
-        // Missing access_token parameter
+
         #expect(throws: RFC_6750.Bearer.Error.self) {
             try RFC_6750.Bearer.parse(fromQueryItems: [
                 RFC_6750.QueryItem(name: "other_param", value: "value")
             ])
         }
 
-        // access_token parameter with nil value
         #expect(throws: RFC_6750.Bearer.Error.self) {
             try RFC_6750.Bearer.parse(fromQueryItems: [
                 RFC_6750.QueryItem(name: "access_token", value: nil)
             ])
         }
 
-        // Empty access_token parameter
         #expect(throws: RFC_6750.Bearer.Error.self) {
             try RFC_6750.Bearer.parse(fromQueryItems: [
                 RFC_6750.QueryItem(name: "access_token", value: "")
@@ -225,7 +208,7 @@ extension `RFC 6750 Tests`.Unit {
 
     @Test
     func `Bearer Challenge parsing error cases`() {
-        // Missing "Bearer" prefix
+
         #expect(throws: RFC_6750.Bearer.Error.self) {
             try RFC_6750.Bearer.Challenge.parse(from: "Basic realm=\"example.com\"")
         }
@@ -268,7 +251,6 @@ extension `RFC 6750 Tests`.Unit {
         let bearer = try RFC_6750.Bearer(token: "mF_9.B5f-4.1JqM~!@#$%^&*()+={}[]|\\:;\"'<>?")
         #expect(bearer.token == "mF_9.B5f-4.1JqM~!@#$%^&*()+={}[]|\\:;\"'<>?")
 
-        // Test round-trip through Authorization header
         let headerValue = bearer.authorizationHeaderValue()
         let parsed = try RFC_6750.Bearer.parse(from: headerValue)
         #expect(parsed.token == bearer.token)
@@ -280,7 +262,6 @@ extension `RFC 6750 Tests`.Unit {
         let bearer = try RFC_6750.Bearer(token: longToken)
         #expect(bearer.token == longToken)
 
-        // Test round-trip through Authorization header
         let headerValue = bearer.authorizationHeaderValue()
         let parsed = try RFC_6750.Bearer.parse(from: headerValue)
         #expect(parsed.token == longToken)
