@@ -2,14 +2,6 @@
 
 import PackageDescription
 
-extension String {
-    static let rfc6750: Self = "RFC 6750"
-}
-
-extension Target.Dependency {
-    static var rfc6750: Self { .target(name: .rfc6750) }
-}
-
 let package = Package(
     name: "swift-rfc-6750",
     platforms: [
@@ -45,17 +37,12 @@ let package = Package(
         .testTarget(
             name: "RFC 6750 Tests",
             dependencies: [
-                "RFC 6750"
+                .target(name: "RFC 6750")
             ]
         ),
     ],
     swiftLanguageModes: [.v6]
 )
-
-extension String {
-    var tests: Self { self + " Tests" }
-    var foundation: Self { self + " Foundation" }
-}
 
 for target in package.targets where ![.system, .binary, .plugin, .macro].contains(target.type) {
     let ecosystem: [SwiftSetting] = [
