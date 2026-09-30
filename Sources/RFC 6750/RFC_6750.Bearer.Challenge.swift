@@ -26,20 +26,20 @@ extension RFC_6750.Bearer.Challenge {
         var components: [String] = ["Bearer"]
 
         if let realm {
-            components.append("realm=\"\(realm)\"")
+            components.append("realm=\(Self.quoted(realm))")
         }
 
         if let scope {
-            components.append("scope=\"\(scope)\"")
+            components.append("scope=\(Self.quoted(scope))")
         }
 
         if let error {
 
-            components.append("error=\"\(error.rawValue)\"")
+            components.append("error=\(Self.quoted(error.rawValue))")
         }
 
         if let errorDescription {
-            components.append("error_description=\"\(errorDescription)\"")
+            components.append("error_description=\(Self.quoted(errorDescription))")
         }
 
         return components.joined(separator: ", ")
@@ -66,8 +66,17 @@ extension RFC_6750.Bearer.Challenge {
             let pBytes = Array(parameters.utf8)
             var segStart = 0
             var components: [String] = []
-            pBytes.indices.forEach { idx in
-                if pBytes[idx] == 0x2C {
+            var inQuotes = false
+            var escaped = false
+            for idx in pBytes.indices {
+                let byte = pBytes[idx]
+                if escaped {
+                    escaped = false
+                } else if inQuotes && byte == 0x5C {
+                    escaped = true
+                } else if byte == 0x22 {
+                    inQuotes.toggle()
+                } else if byte == 0x2C && !inQuotes {
                     components.append(String(decoding: pBytes[segStart..<idx], as: UTF8.self))
                     segStart = idx &+ 1
                 }
@@ -113,9 +122,26 @@ extension RFC_6750.Bearer.Challenge {
 
         let value = String(component.dropFirst(prefix.count))
             .trimming(where: { $0.isWhitespace })
-        if value.hasPrefix("\"") && value.hasSuffix("\"") {
-            return String(value.dropFirst().dropLast())
+        if value.count >= 2, value.hasPrefix("\"") && value.hasSuffix("\"") {
+            var unescaped = ""
+            var escaped = false
+            for character in value.dropFirst().dropLast() {
+                if !escaped && character == "\\" {
+                    escaped = true
+                } else {
+                    unescaped.append(character)
+                    escaped = false
+                }
+            }
+            return unescaped
         }
         return String(value)
+    }
+}
+
+extension RFC_6750.Bearer.Challenge {
+
+    fileprivate static func quoted(_ value: String) -> String {
+        "\"" + value.replacing("\\", with: "\\\\").replacing("\"", with: "\\\"") + "\""
     }
 }
