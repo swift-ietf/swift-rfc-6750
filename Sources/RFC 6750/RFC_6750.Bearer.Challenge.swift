@@ -23,7 +23,7 @@ extension RFC_6750.Bearer {
 extension RFC_6750.Bearer.Challenge {
 
     public func wwwAuthenticateHeaderValue() -> String {
-        var components: [String] = ["Bearer"]
+        var components: [String] = []
 
         if let realm {
             components.append("realm=\(Self.quoted(realm))")
@@ -42,7 +42,7 @@ extension RFC_6750.Bearer.Challenge {
             components.append("error_description=\(Self.quoted(errorDescription))")
         }
 
-        return components.joined(separator: ", ")
+        return components.isEmpty ? "Bearer" : "Bearer " + components.joined(separator: ", ")
     }
 
     public static func parse(

@@ -85,7 +85,7 @@ let challenge = RFC_6750.Bearer.Challenge(
 
 // Generate WWW-Authenticate header value
 let headerValue = challenge.wwwAuthenticateHeaderValue()
-// Result: Bearer, realm="example", scope="read write", error="invalid_token", error_description="The access token expired"
+// Result: Bearer realm="example", scope="read write", error="invalid_token", error_description="The access token expired"
 ```
 
 ### Parsing WWW-Authenticate Challenges

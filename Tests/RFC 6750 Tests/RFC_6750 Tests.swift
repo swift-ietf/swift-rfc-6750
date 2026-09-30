@@ -161,7 +161,7 @@ extension `RFC 6750 Tests`.Unit {
 
         let challengeWithRealm = RFC_6750.Bearer.Challenge(realm: "example.com")
         let headerValueWithRealm = challengeWithRealm.wwwAuthenticateHeaderValue()
-        #expect(headerValueWithRealm == "Bearer, realm=\"example.com\"")
+        #expect(headerValueWithRealm == "Bearer realm=\"example.com\"")
 
         let fullChallenge = RFC_6750.Bearer.Challenge(
             realm: "example.com",
@@ -172,7 +172,7 @@ extension `RFC 6750 Tests`.Unit {
         let fullHeaderValue = fullChallenge.wwwAuthenticateHeaderValue()
         #expect(
             fullHeaderValue
-                == "Bearer, realm=\"example.com\", scope=\"read write\", error=\"invalid_token\", error_description=\"Token has expired\""
+                == "Bearer realm=\"example.com\", scope=\"read write\", error=\"invalid_token\", error_description=\"Token has expired\""
         )
     }
 
