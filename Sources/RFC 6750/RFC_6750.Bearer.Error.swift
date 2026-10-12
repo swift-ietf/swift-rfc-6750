@@ -1,6 +1,6 @@
 extension RFC_6750.Bearer {
 
-    public enum Error: Swift.Error, Sendable, Equatable {
+    public enum Error: Swift::Error, Sendable, Equatable {
         case invalidRequest(String)
         case invalidToken(String)
         case insufficientScope(String)
