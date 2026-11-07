@@ -2,14 +2,18 @@ import Foundation
 import RFC_6750
 import Testing
 
-@Suite
-struct `README Verification` {
-    @Suite struct Unit {}
-    @Suite struct `Edge Case` {}
-    @Suite struct Integration {}
+enum `ReadmeVerification Tests` {}
+
+extension `ReadmeVerification Tests` {
+    @Suite
+    struct `README Verification` {
+        @Suite struct Unit {}
+        @Suite struct `Edge Case` {}
+        @Suite struct Integration {}
+    }
 }
 
-extension `README Verification`.Unit {
+extension `ReadmeVerification Tests`.`README Verification`.Unit {
     @Test
     func `README Line 47-56: Creating Bearer Tokens`() throws {
 

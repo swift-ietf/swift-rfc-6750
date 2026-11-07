@@ -2,14 +2,18 @@ import Testing
 
 @testable import RFC_6750
 
-@Suite
-struct `Bearer B64Token Tests` {
-    @Suite struct Unit {}
-    @Suite struct `Edge Case` {}
-    @Suite struct Integration {}
+enum `RFC_6750.Bearer.B64Token Tests` {}
+
+extension `RFC_6750.Bearer.B64Token Tests` {
+    @Suite
+    struct `Bearer B64Token Tests` {
+        @Suite struct Unit {}
+        @Suite struct `Edge Case` {}
+        @Suite struct Integration {}
+    }
 }
 
-extension `Bearer B64Token Tests`.Unit {
+extension `RFC_6750.Bearer.B64Token Tests`.`Bearer B64Token Tests`.Unit {
     @Test
     func `Valid b64token strings conform`() {
 
