@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 
 @testable import RFC_6750
@@ -295,5 +296,20 @@ extension `RFC_6750 Tests`.`RFC 6750 Tests`.`Edge Case` {
         )) {
             try RFC_6750.Bearer.parse(fromQueryItems: [.init(name: "access_token", value: "tök")])
         }
+    }
+}
+
+extension `RFC_6750 Tests`.`RFC 6750 Tests`.`Edge Case` {
+    @Test
+    func `Decoded tokens are validated like init(token:)`() throws {
+        let decoder = JSONDecoder()
+        #expect(throws: DecodingError.self) {
+            try decoder.decode(RFC_6750.Bearer.self, from: Data(#"{"token":"abc def"}"#.utf8))
+        }
+        #expect(throws: DecodingError.self) {
+            try decoder.decode(RFC_6750.Bearer.self, from: Data(#"{"token":""}"#.utf8))
+        }
+        let decoded = try decoder.decode(RFC_6750.Bearer.self, from: Data(#"{"token":"mF_9.B5f-4.1JqM"}"#.utf8))
+        #expect(decoded.token == "mF_9.B5f-4.1JqM")
     }
 }

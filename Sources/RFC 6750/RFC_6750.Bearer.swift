@@ -17,6 +17,20 @@ extension RFC_6750 {
         init(__unchecked: Void, token: String) {
             self.token = token
         }
+
+        public init(from decoder: any Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            let token = try container.decode(String.self, forKey: .token)
+            do {
+                try self.init(token: token)
+            } catch {
+                throw DecodingError.dataCorruptedError(
+                    forKey: .token,
+                    in: container,
+                    debugDescription: error.description
+                )
+            }
+        }
     }
 }
 
