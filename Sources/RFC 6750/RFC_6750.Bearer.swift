@@ -21,7 +21,7 @@ extension RFC_6750 {
         public init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             let token = try container.decode(String.self, forKey: .token)
-            do {
+            do throws(Error) {
                 try self.init(token: token)
             } catch {
                 throw DecodingError.dataCorruptedError(
