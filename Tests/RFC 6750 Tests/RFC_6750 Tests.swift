@@ -271,3 +271,29 @@ extension `RFC_6750 Tests`.`RFC 6750 Tests`.Unit {
         #expect(parsed.token == longToken)
     }
 }
+
+extension `RFC_6750 Tests`.`RFC 6750 Tests`.`Edge Case` {
+    @Test
+    func `Parsed tokens are validated like init(token:)`() {
+        #expect(throws: RFC_6750.Bearer.Error.invalidToken(
+            "Token must contain only ASCII non-whitespace characters"
+        )) {
+            try RFC_6750.Bearer.parse(from: "Bearer tök")
+        }
+        #expect(throws: RFC_6750.Bearer.Error.invalidToken(
+            "Token must contain only ASCII non-whitespace characters"
+        )) {
+            try RFC_6750.Bearer.parse(from: "Bearer abc def")
+        }
+        #expect(throws: RFC_6750.Bearer.Error.invalidToken(
+            "Token must contain only ASCII non-whitespace characters"
+        )) {
+            try RFC_6750.Bearer.parse(fromFormParameters: ["access_token": "abc def"])
+        }
+        #expect(throws: RFC_6750.Bearer.Error.invalidToken(
+            "Token must contain only ASCII non-whitespace characters"
+        )) {
+            try RFC_6750.Bearer.parse(fromQueryItems: [.init(name: "access_token", value: "tök")])
+        }
+    }
+}

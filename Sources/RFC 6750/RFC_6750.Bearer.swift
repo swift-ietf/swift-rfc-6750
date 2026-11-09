@@ -46,7 +46,7 @@ extension RFC_6750.Bearer {
             throw Error.invalidToken("Bearer token cannot be empty")
         }
 
-        return RFC_6750.Bearer(__unchecked: (), token: tokenString)
+        return try RFC_6750.Bearer(token: tokenString)
     }
 
     public static func parse(
@@ -60,7 +60,7 @@ extension RFC_6750.Bearer {
             throw Error.invalidToken("Bearer token cannot be empty")
         }
 
-        return RFC_6750.Bearer(__unchecked: (), token: tokenString)
+        return try RFC_6750.Bearer(token: tokenString)
     }
 
     public static func parse(
@@ -76,6 +76,6 @@ extension RFC_6750.Bearer {
             throw Error.invalidToken("Bearer token cannot be empty")
         }
 
-        return RFC_6750.Bearer(__unchecked: (), token: tokenString)
+        return try RFC_6750.Bearer(token: tokenString)
     }
 }
